@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - University Mess Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #FFF5E6;
+        }
+        h1 {
+            color: #FF6347;
+        }
+        .menu-item {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .menu-item h2 {
+            color: #FF8C00;
+        }
+        .price {
+            font-weight: bold;
+            color: #228B22;
+        }
+        .food-item {
+            cursor: pointer;
+            padding: 5px;
+            transition: background-color 0.3s;
+        }
+        .food-item:hover {
+            background-color: #f0f0f0;
+        }
+        #cart {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        #cart h2 {
+            color: #FF8C00;
+        }
+        #cart-items {
+            list-style-type: none;
+            padding: 0;
+        }
+        #cart-total {
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+            color: #0066cc;
+            text-decoration: underline;
+        }
+        #cart-total:hover {
+            color: #004080;
+        }
+    </style>
+</head>
+<body>
+    <h1>University Mess Menu</h1>
+
+    <div class="menu-item">
+        <h2>Breakfast</h2>
+        <p class="food-item" data-name="Mandazi and Chai" data-price="50">Mandazi and Chai <span class="price">KES 50</span></p>
+        <p class="food-item" data-name="Chapati and Beans" data-price="100">Chapati and Beans <span class="price">KES 100</span></p>
+        <p class="food-item" data-name="Uji (Porridge)" data-price="40">Uji (Porridge) <span class="price">KES 40</span></p>
+    </div>
+
+    <div class="menu-item">
+        <h2>Lunch</h2>
+        <p class="food-item" data-name="Ugali and Sukuma Wiki" data-price="150">Ugali and Sukuma Wiki <span class="price">KES 150</span></p>
+        <p class="food-item" data-name="Rice and Beef Stew" data-price="200">Rice and Beef Stew <span class="price">KES 200</span></p>
+        <p class="food-item" data-name="Githeri" data-price="120">Githeri <span class="price">KES 120</span></p>
+    </div>
+
+    <div class="menu-item">
+        <h2>Dinner</h2>
+        <p class="food-item" data-name="Nyama Choma with Ugali" data-price="350">Nyama Choma with Ugali <span class="price">KES 350</span></p>
+        <p class="food-item" data-name="Pilau" data-price="300">Pilau <span class="price">KES 300</span></p>
+        <p class="food-item" data-name="Mukimo and Chicken Stew" data-price="400">Mukimo and Chicken Stew <span class="price">KES 400</span></p>
+    </div>
+
+    <div id="cart">
+        <h2>Your Cart</h2>
+        <ul id="cart-items"></ul>
+        <p id="cart-total">Total: KES 0.00</p>
+    </div>
+
+    <a href="{% url 'my_home' %}">Back to Home</a>
+
+    <script>
+        const cart = [];
+        const cartItems = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+
+        function updateCart() {
+            cartItems.innerHTML = '';
+            let total = 0;
+            cart.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.name} - KES ${item.price.toFixed(2)}`;
+                cartItems.appendChild(li);
+                total += item.price;
+            });
+            cartTotal.textContent = `Total: KES ${total.toFixed(2)} (Click to pay)`;
+        }
+
+        document.querySelectorAll('.food-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const name = item.getAttribute('data-name');
+                const price = parseFloat(item.getAttribute('data-price'));
+                cart.push({ name, price });
+                updateCart();
+            });
+        });
+
+        cartTotal.addEventListener('click', () => {
+            const total = parseFloat(cartTotal.textContent.split('KES ')[1]);
+            if (total > 0) {
+                window.location.href = `payment?total=${total}`;
+            } else {
+                alert('Your cart is empty. Add some items before proceeding to payment.');
+            }
+        });
+    </script>
+</body>
+</html>

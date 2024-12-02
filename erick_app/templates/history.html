@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - University Mess Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #FFF5E6;
+        }
+        h1 {
+            color: #FF6347;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #FF8C00;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .done {
+            color: green;
+        }
+        .in-progress {
+            color: orange;
+        }
+    </style>
+</head>
+<body>
+    <h1>Purchase History</h1>
+
+    <table id="historyTable">
+        <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Student ID</th>
+            <th>Amount (KES)</th>
+            <th>Payment Method</th>
+            <th>Status</th>
+        </tr>
+    </table>
+
+    <br>
+    <a href="{% url 'my_home' %}">Back to Home</a>
+
+    <script>
+        // Function to load and display order history
+        function loadOrderHistory() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const studentId = urlParams.get('studentId'); // Get student ID from URL parameters
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const historyTable = document.getElementById('historyTable');
+
+            let hasOrder = false; // Flag to check if the student has any orders
+
+            orders.forEach(order => {
+                if (order.studentId === studentId) { // Only display orders for the logged-in student
+                    hasOrder = true;
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${order.date}</td>
+                        <td>${order.name}</td>
+                        <td>${order.studentId}</td>
+                        <td>${order.amount}</td>
+                        <td>${order.paymentMethod}</td>
+                        <td class="${order.status === 'Done' ? 'done' : 'in-progress'}">${order.status}</td>
+                    `;
+                    historyTable.appendChild(row);
+                }
+            });
+
+            // If no order exists, show a message
+            if (!hasOrder) {
+                const messageRow = document.createElement('tr');
+                messageRow.innerHTML = `<td colspan="6">No previous orders found. You can place an order now!</td>`;
+                historyTable.appendChild(messageRow);
+            }
+        }
+
+        // Load order history on page load
+        window.onload = loadOrderHistory;
+    </script>
+</body>
+</html>
